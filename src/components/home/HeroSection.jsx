@@ -1,9 +1,7 @@
-// src/components/home/HeroSection.jsx
 import React from 'react';
 import { Link } from 'react-router-dom';
 
 const HeroSection = ({ featuredArticle }) => {
-  // Jika tidak ada featuredArticle, tampilkan fallback
   if (!featuredArticle) {
     return (
       <div className="relative bg-gray-900 h-96 flex items-center justify-center">
@@ -15,14 +13,13 @@ const HeroSection = ({ featuredArticle }) => {
     );
   }
 
-  // Pastikan author ada, jika tidak gunakan objek kosong
   const author = featuredArticle.author || {};
-  
+
   return (
     <div className="relative bg-gray-900 overflow-hidden">
       <div className="absolute inset-0">
         <img
-          src={featuredArticle.imageUrl || '/path/to/default-image.jpg'}
+          src={featuredArticle.image_url || '/path/to/default-image.jpg'}
           alt={featuredArticle.title || 'Featured Article'}
           className="w-full h-full object-cover opacity-40"
         />
@@ -31,7 +28,9 @@ const HeroSection = ({ featuredArticle }) => {
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
         <div className="max-w-3xl">
           <span className="inline-block bg-primary text-white px-3 py-1 text-sm font-semibold rounded-md mb-4">
-            {featuredArticle.category || 'Artikel'}
+            {typeof featuredArticle.category === 'string'
+              ? featuredArticle.category
+              : featuredArticle.category?.name || 'Artikel'}
           </span>
           <h1 className="text-4xl font-bold text-white sm:text-5xl md:text-6xl mb-4">
             {featuredArticle.title}
@@ -41,13 +40,21 @@ const HeroSection = ({ featuredArticle }) => {
           </p>
           <div className="flex items-center space-x-4 mb-6">
             <img
-              src={author.avatarUrl || '/path/to/default-avatar.jpg'}
-              alt={author.name || 'Author'}
+              src={author.avatar_url || '/path/to/default-avatar.jpg'}
+              alt={author.full_name || author.username || 'Author'}
               className="w-10 h-10 rounded-full"
             />
             <div>
-              <p className="text-white font-medium">{author.name || 'Unknown Author'}</p>
-              <p className="text-gray-400 text-sm">{featuredArticle.publishedDate || 'Baru saja'}</p>
+              <p className="text-white font-medium">{author.full_name || author.username || 'Unknown Author'}</p>
+              <p className="text-gray-400 text-sm">
+                {featuredArticle.published_at
+                  ? new Date(featuredArticle.published_at).toLocaleDateString('id-ID', {
+                      year: 'numeric',
+                      month: 'long',
+                      day: 'numeric',
+                    })
+                  : 'Baru saja'}
+              </p>
             </div>
           </div>
           <Link

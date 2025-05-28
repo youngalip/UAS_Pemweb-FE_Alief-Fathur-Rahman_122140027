@@ -30,6 +30,7 @@ export const logout = createAsyncThunk(
   'auth/logout',
   async () => {
     await authAPI.logout();
+    localStorage.removeItem('token');  // Hapus token di sini
   }
 );
 
@@ -70,7 +71,10 @@ const authSlice = createSlice({
       })
       .addCase(login.fulfilled, (state, action) => {
         state.status = 'succeeded';
-        state.user = action.payload.user;
+        state.user = {
+          ...action.payload.user,
+          isAdmin: action.payload.user.is_admin, // map is_admin ke isAdmin
+        };
         state.isAuthenticated = true;
       })
       .addCase(login.rejected, (state, action) => {
@@ -85,7 +89,10 @@ const authSlice = createSlice({
       })
       .addCase(register.fulfilled, (state, action) => {
         state.status = 'succeeded';
-        state.user = action.payload.user;
+        state.user = {
+          ...action.payload.user,
+          isAdmin: action.payload.user.is_admin,
+        };
         state.isAuthenticated = true;
       })
       .addCase(register.rejected, (state, action) => {
@@ -105,7 +112,10 @@ const authSlice = createSlice({
       })
       .addCase(checkAuth.fulfilled, (state, action) => {
         state.status = 'succeeded';
-        state.user = action.payload.user;
+        state.user = {
+          ...action.payload.user,
+          isAdmin: action.payload.user.is_admin,
+        };
         state.isAuthenticated = true;
       })
       .addCase(checkAuth.rejected, (state) => {

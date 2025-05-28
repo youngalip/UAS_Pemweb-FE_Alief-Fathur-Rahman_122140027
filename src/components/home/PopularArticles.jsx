@@ -1,9 +1,7 @@
-// src/components/home/PopularArticles.jsx
 import React from 'react';
 import { Link } from 'react-router-dom';
 
 const PopularArticles = ({ articles }) => {
-  // Pastikan articles adalah array
   const validArticles = Array.isArray(articles) ? articles : [];
 
   if (validArticles.length === 0) {
@@ -27,18 +25,19 @@ const PopularArticles = ({ articles }) => {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          {/* Left column - Main popular article */}
           {validArticles.length > 0 && (
             <div className="bg-white rounded-lg shadow-md overflow-hidden group">
               <Link to={`/articles/${validArticles[0].id || '#'}`}>
                 <div className="relative">
                   <img 
-                    src={validArticles[0].imageUrl || 'https://source.unsplash.com/random/600x400/?basketball'} 
+                    src={validArticles[0].image_url || 'https://source.unsplash.com/random/600x400/?basketball'} 
                     alt={validArticles[0].title || 'Popular Article'} 
                     className="w-full h-64 object-cover transition-transform duration-300 group-hover:scale-105"
                   />
                   <div className="absolute top-3 left-3 bg-primary text-white px-3 py-1 text-sm font-semibold rounded-md">
-                    {validArticles[0].category || 'Featured'}
+                    {typeof validArticles[0].category === 'string'
+                      ? validArticles[0].category
+                      : validArticles[0].category?.name || 'Featured'}
                   </div>
                   <div className="absolute top-3 right-3 bg-gray-900 bg-opacity-70 text-white px-3 py-1 text-sm font-semibold rounded-md flex items-center">
                     <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -56,13 +55,19 @@ const PopularArticles = ({ articles }) => {
                   <div className="flex items-center justify-between">
                     <div className="flex items-center">
                       <img
-                        src={validArticles[0].author?.avatarUrl || 'https://source.unsplash.com/random/40x40/?person'}
-                        alt={validArticles[0].author?.name || 'Author'}
+                        src={validArticles[0].author?.avatar_url || 'https://source.unsplash.com/random/40x40/?person'}
+                        alt={validArticles[0].author?.full_name || validArticles[0].author?.username || 'Author'}
                         className="w-8 h-8 rounded-full mr-3"
                       />
                       <div>
-                        <p className="text-sm font-medium text-gray-900">{validArticles[0].author?.name || 'Unknown Author'}</p>
-                        <p className="text-xs text-gray-500">{validArticles[0].publishedDate || 'Recent'}</p>
+                        <p className="text-sm font-medium text-gray-900">
+                          {validArticles[0].author?.full_name || validArticles[0].author?.username || 'Unknown Author'}
+                        </p>
+                        <p className="text-xs text-gray-500">
+                          {validArticles[0].published_at
+                            ? new Date(validArticles[0].published_at).toLocaleDateString('id-ID')
+                            : 'Recent'}
+                        </p>
                       </div>
                     </div>
                     <span className="text-primary font-medium text-sm">Baca Selengkapnya</span>
@@ -72,7 +77,6 @@ const PopularArticles = ({ articles }) => {
             </div>
           )}
 
-          {/* Right column - List of popular articles */}
           <div className="space-y-4">
             {validArticles.slice(1, 5).map(article => (
               <Link 
@@ -82,12 +86,14 @@ const PopularArticles = ({ articles }) => {
               >
                 <div className="w-1/3 relative">
                   <img 
-                    src={article.imageUrl || 'https://source.unsplash.com/random/300x200/?basketball'} 
+                    src={article.image_url || 'https://source.unsplash.com/random/300x200/?basketball'} 
                     alt={article.title || 'Article'} 
                     className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
                   />
                   <div className="absolute top-2 left-2 bg-primary text-white px-2 py-0.5 text-xs font-semibold rounded">
-                    {article.category || 'Uncategorized'}
+                    {typeof article.category === 'string'
+                      ? article.category
+                      : article.category?.name || 'Uncategorized'}
                   </div>
                 </div>
                 <div className="w-2/3 p-4 flex flex-col justify-between">
@@ -98,7 +104,7 @@ const PopularArticles = ({ articles }) => {
                     <p className="text-xs text-gray-500 line-clamp-1">{article.excerpt || 'No excerpt available.'}</p>
                   </div>
                   <div className="flex items-center justify-between">
-                    <span className="text-xs text-gray-500">{article.publishedDate || 'Recent'}</span>
+                    <span className="text-xs text-gray-500">{article.published_at ? new Date(article.published_at).toLocaleDateString('id-ID') : 'Recent'}</span>
                     <div className="flex items-center text-xs text-gray-500">
                       <svg className="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>

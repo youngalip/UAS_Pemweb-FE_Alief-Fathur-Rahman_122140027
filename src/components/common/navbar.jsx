@@ -10,9 +10,9 @@ const Navbar = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const handleLogout = () => {
-    dispatch(logout());
-    navigate('/');
+  const handleLogout = async () => {
+    await dispatch(logout());
+    navigate('/login');  // Redirect ke halaman login setelah logout
   };
 
   return (

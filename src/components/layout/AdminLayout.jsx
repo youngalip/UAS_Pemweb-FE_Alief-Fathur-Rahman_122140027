@@ -18,7 +18,7 @@ const AdminLayout = () => {
   }
   
   // Redirect to home if authenticated but not admin
-  if (!user.isAdmin) {
+  if (!user.is_admin) {
     return <Navigate to="/" replace />;
   }
 

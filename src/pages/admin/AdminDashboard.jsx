@@ -35,13 +35,7 @@ const AdminDashboard = () => {
 
   return (
     <div className="min-h-screen bg-gray-100">
-      <div className="flex">
-        {/* Sidebar */}
-        <AdminSidebar />
-
-        {/* Main Content */}
-        <div className="flex-1 p-8">
-          <h1 className="text-2xl font-bold text-gray-900 mb-6">Dashboard Admin</h1>
+      <h1 className="text-2xl font-bold text-gray-900 mb-6">Dashboard Admin</h1>
 
           {/* Stats Cards */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
@@ -219,7 +213,8 @@ const AdminDashboard = () => {
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap">
                             <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
-                              {article.category}
+                              {typeof article.category === 'string' 
+                              ? article.category : article.category?.name || 'Uncategorized'}
                             </span>
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
@@ -239,8 +234,6 @@ const AdminDashboard = () => {
             </div>
           </div>
         </div>
-      </div>
-    </div>
   );
 };
 
