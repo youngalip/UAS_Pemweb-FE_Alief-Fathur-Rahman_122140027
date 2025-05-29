@@ -1,4 +1,3 @@
-// src/components/home/LatestNews.jsx
 import React from 'react';
 import { Link } from 'react-router-dom';
 import ArticleCard from '../articles/ArticleCard';

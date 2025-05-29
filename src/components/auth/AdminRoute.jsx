@@ -2,8 +2,8 @@ import { Navigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import LoadingSpinner from '../common/LoadingSpinner';
 
-const ProtectedRoute = ({ children }) => {
-  const { isAuthenticated, status } = useSelector(state => state.auth);
+const AdminRoute = ({ children }) => {
+  const { isAuthenticated, user, status } = useSelector(state => state.auth);
 
   if (status === 'loading') {
     return <LoadingSpinner />;
@@ -13,8 +13,11 @@ const ProtectedRoute = ({ children }) => {
     return <Navigate to="/login" replace />;
   }
 
-  // Tidak cek admin, semua user login boleh akses
+  if (!user.isAdmin) {
+    return <Navigate to="/" replace />;
+  }
+
   return children;
 };
 
-export default ProtectedRoute;
+export default AdminRoute;

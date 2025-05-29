@@ -30,12 +30,6 @@ const Navbar = () => {
               <Link to="/articles" className="text-gray-900 hover:text-primary inline-flex items-center px-1 pt-1 border-b-2 border-transparent hover:border-primary text-sm font-medium">
                 Artikel
               </Link>
-              <Link to="/ibl" className="text-gray-900 hover:text-primary inline-flex items-center px-1 pt-1 border-b-2 border-transparent hover:border-primary text-sm font-medium">
-                IBL
-              </Link>
-              <Link to="/nba" className="text-gray-900 hover:text-primary inline-flex items-center px-1 pt-1 border-b-2 border-transparent hover:border-primary text-sm font-medium">
-                NBA
-              </Link>
               <Link to="/community" className="text-gray-900 hover:text-primary inline-flex items-center px-1 pt-1 border-b-2 border-transparent hover:border-primary text-sm font-medium">
                 Komunitas
               </Link>
@@ -102,12 +96,6 @@ const Navbar = () => {
             </Link>
             <Link to="/articles" className="text-gray-900 hover:text-primary block pl-3 pr-4 py-2 border-l-4 border-transparent hover:border-primary text-base font-medium">
               Artikel
-            </Link>
-            <Link to="/ibl" className="text-gray-900 hover:text-primary block pl-3 pr-4 py-2 border-l-4 border-transparent hover:border-primary text-base font-medium">
-              IBL
-            </Link>
-            <Link to="/nba" className="text-gray-900 hover:text-primary block pl-3 pr-4 py-2 border-l-4 border-transparent hover:border-primary text-base font-medium">
-              NBA
             </Link>
             <Link to="/community" className="text-gray-900 hover:text-primary block pl-3 pr-4 py-2 border-l-4 border-transparent hover:border-primary text-base font-medium">
               Komunitas

@@ -140,7 +140,7 @@ const ArticlesPage = () => {
       <div className="bg-primary">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
           <h1 className="text-4xl font-bold text-white text-center">Artikel Basket</h1>
-          <p className="mt-4 text-xl text-primary-light text-center max-w-3xl mx-auto">
+          <p className="mt-4 text-xl text-white text-center max-w-3xl mx-auto">
             Temukan berita terbaru, analisis mendalam, dan cerita menarik dari dunia basket Indonesia dan internasional.
           </p>
           

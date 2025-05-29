@@ -1,6 +1,15 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 
+const backendBaseURL = 'http://localhost:6543'; // Ganti dengan URL backend kamu
+
+const isFullURL = (url) => /^https?:\/\//i.test(url);
+
+const getImageSrc = (image_url) => {
+  if (!image_url) return 'https://source.unsplash.com/random/400x300/?basketball';
+  return isFullURL(image_url) ? image_url : backendBaseURL + image_url;
+};
+
 const PopularArticles = ({ articles }) => {
   const validArticles = Array.isArray(articles) ? articles : [];
 
@@ -30,7 +39,7 @@ const PopularArticles = ({ articles }) => {
               <Link to={`/articles/${validArticles[0].id || '#'}`}>
                 <div className="relative">
                   <img 
-                    src={validArticles[0].image_url || 'https://source.unsplash.com/random/600x400/?basketball'} 
+                    src={getImageSrc(validArticles[0].image_url)} 
                     alt={validArticles[0].title || 'Popular Article'} 
                     className="w-full h-64 object-cover transition-transform duration-300 group-hover:scale-105"
                   />
@@ -55,7 +64,7 @@ const PopularArticles = ({ articles }) => {
                   <div className="flex items-center justify-between">
                     <div className="flex items-center">
                       <img
-                        src={validArticles[0].author?.avatar_url || 'https://source.unsplash.com/random/40x40/?person'}
+                        src={getImageSrc(validArticles[0].author?.avatar_url)}
                         alt={validArticles[0].author?.full_name || validArticles[0].author?.username || 'Author'}
                         className="w-8 h-8 rounded-full mr-3"
                       />
@@ -86,7 +95,7 @@ const PopularArticles = ({ articles }) => {
               >
                 <div className="w-1/3 relative">
                   <img 
-                    src={article.image_url || 'https://source.unsplash.com/random/300x200/?basketball'} 
+                    src={getImageSrc(article.image_url)} 
                     alt={article.title || 'Article'} 
                     className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
                   />

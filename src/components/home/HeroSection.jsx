@@ -1,6 +1,14 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 
+const backendBaseURL = 'http://localhost:6543'; // Ganti sesuai backend
+
+const getImageSrc = (image_url) => {
+  if (!image_url) return '/path/to/default-image.jpg';
+  if (/^https?:\/\//i.test(image_url)) return image_url;
+  return backendBaseURL + image_url;
+};
+
 const HeroSection = ({ featuredArticle }) => {
   if (!featuredArticle) {
     return (
@@ -19,7 +27,7 @@ const HeroSection = ({ featuredArticle }) => {
     <div className="relative bg-gray-900 overflow-hidden">
       <div className="absolute inset-0">
         <img
-          src={featuredArticle.image_url || '/path/to/default-image.jpg'}
+          src={getImageSrc(featuredArticle.image_url)}
           alt={featuredArticle.title || 'Featured Article'}
           className="w-full h-full object-cover opacity-40"
         />
@@ -40,7 +48,7 @@ const HeroSection = ({ featuredArticle }) => {
           </p>
           <div className="flex items-center space-x-4 mb-6">
             <img
-              src={author.avatar_url || '/path/to/default-avatar.jpg'}
+              src={getImageSrc(author.avatar_url)}
               alt={author.full_name || author.username || 'Author'}
               className="w-10 h-10 rounded-full"
             />
