@@ -1,97 +1,90 @@
+// src/components/articles/CommentSection.jsx
 import { useState } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { addComment } from '../../features/articles/articlesSlice';
 
 const CommentSection = ({ articleId, comments = [] }) => {
-  const [commentText, setCommentText] = useState('');
-  const { user, isAuthenticated } = useSelector(state => state.auth);
+  const [content, setContent] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const dispatch = useDispatch();
-
-  const handleSubmitComment = (e) => {
+  const { user, isAuthenticated } = useSelector(state => state.auth);
+  
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!commentText.trim()) return;
-
-    dispatch(addComment({
-      articleId,
-      comment: {
-        text: commentText,
-        userId: user.id,
-      }
-    }));
+    if (!content.trim()) return;
     
-    setCommentText('');
+    setIsSubmitting(true);
+    try {
+      await dispatch(addComment({ 
+        articleId, 
+        comment: { content } 
+      })).unwrap();
+      setContent('');
+    } catch (error) {
+      console.error('Failed to add comment:', error);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
-    <div className="mt-12 border-t border-gray-200 pt-8">
-      <h3 className="text-2xl font-bold text-gray-900 mb-6">Komentar ({comments.length})</h3>
+    <div className="mt-12">
+      <h3 className="text-xl font-bold mb-6">Comments ({comments?.length || 0})</h3>
       
-      {/* Comment Form */}
       {isAuthenticated ? (
-        <form onSubmit={handleSubmitComment} className="mb-8">
-          <div className="flex items-start space-x-4">
-            <img
-              src={user.avatarUrl || 'https://via.placeholder.com/40'}
-              alt={user.name}
-              className="w-10 h-10 rounded-full"
-            />
-            <div className="min-w-0 flex-1">
-              <textarea
-                id="comment"
-                name="comment"
-                rows="3"
-                className="shadow-sm block w-full focus:ring-primary focus:border-primary border-gray-300 rounded-md"
-                placeholder="Tulis komentar Anda..."
-                value={commentText}
-                onChange={(e) => setCommentText(e.target.value)}
-                required
-              />
-              <div className="mt-3 flex justify-end">
-                <button
-                  type="submit"
-                  className="bg-primary hover:bg-primary-dark text-white px-4 py-2 rounded-md text-sm font-medium"
-                >
-                  Kirim Komentar
-                </button>
-              </div>
-            </div>
-          </div>
+        <form onSubmit={handleSubmit} className="mb-8">
+          <textarea
+            value={content}
+            onChange={(e) => setContent(e.target.value)}
+            placeholder="Write your comment..."
+            className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary focus:border-transparent"
+            rows="4"
+            required
+          />
+          <button
+            type="submit"
+            disabled={isSubmitting || !content.trim()}
+            className={`mt-2 px-4 py-2 rounded-md text-white font-medium ${
+              isSubmitting || !content.trim() 
+                ? 'bg-gray-400 cursor-not-allowed' 
+                : 'bg-primary hover:bg-primary-dark'
+            }`}
+          >
+            {isSubmitting ? 'Posting...' : 'Post Comment'}
+          </button>
         </form>
       ) : (
-        <div className="bg-gray-50 p-4 rounded-md mb-8">
-          <p className="text-gray-700">
-            Silakan <a href="/login" className="text-primary font-medium">login</a> untuk menambahkan komentar.
-          </p>
+        <div className="bg-gray-100 p-4 rounded-md mb-8">
+          <p>Please <a href="/login" className="text-primary hover:underline">login</a> to comment</p>
         </div>
       )}
-
-      {/* Comments List */}
-      <div className="space-y-6">
-        {comments.length > 0 ? (
-          comments.map((comment) => (
-            <div key={comment.id} className="flex space-x-4">
-              <div className="flex-shrink-0">
-                <img
-                  src={comment.user.avatarUrl || 'https://via.placeholder.com/40'}
-                  alt={comment.user.name}
-                  className="h-10 w-10 rounded-full"
+      
+      {comments && comments.length > 0 ? (
+        <div className="space-y-6">
+          {comments.map(comment => (
+            <div key={comment.id} className="border-b pb-6">
+              <div className="flex items-start">
+                <img 
+                  src={comment.user?.avatar_url || '/assets/images/default-avatar.png'} 
+                  alt={comment.user?.username || 'User'} 
+                  className="w-10 h-10 rounded-full mr-3"
                 />
-              </div>
-              <div className="flex-1 bg-gray-50 rounded-lg px-4 py-3">
-                <div className="flex items-center justify-between">
-                  <h4 className="text-sm font-medium text-gray-900">{comment.user.name}</h4>
-                  <p className="text-xs text-gray-500">{comment.createdAt}</p>
-                </div>
-                <div className="mt-1 text-sm text-gray-700">
-                  <p>{comment.text}</p>
+                <div>
+                  <div className="flex items-center">
+                    <h4 className="font-medium">{comment.user?.username || 'Anonymous'}</h4>
+                    <span className="text-gray-500 text-sm ml-2">
+                      {new Date(comment.created_at).toLocaleDateString()}
+                    </span>
+                  </div>
+                  <p className="mt-1 text-gray-800">{comment.content}</p>
                 </div>
               </div>
             </div>
-          ))
-        ) : (
-          <p className="text-gray-500 text-center py-4">Belum ada komentar. Jadilah yang pertama berkomentar!</p>
-        )}
-      </div>
+          ))}
+        </div>
+      ) : (
+        <p className="text-gray-500 italic">No comments yet. Be the first to comment!</p>
+      )}
     </div>
   );
 };

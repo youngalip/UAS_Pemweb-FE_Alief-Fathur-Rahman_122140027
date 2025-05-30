@@ -1,78 +1,98 @@
-import axios from 'axios';
-
-const API_URL = '/api/articles';
+// src/features/articles/articlesAPI.js
+import api from '../../utils/api';  // Gunakan instance API yang sudah dibuat
 
 const articlesAPI = {
   // Get all articles with optional filters
-  getArticles: (params) => {
-    return axios.get(API_URL, { params });
+  getArticles: async (params) => {
+    const response = await api.get('/articles', { params });
+    return response.data;
   },
   
   // Get a single article by ID
-  getArticleById: (id) => {
-    return axios.get(`${API_URL}/${id}`);
+  getArticleById: async (id) => {
+    try {
+      console.log(`Fetching article with ID: ${id}`);
+      const response = await api.get(`/articles/${id}`);
+      console.log('Article data received:', response.data);
+      return response.data;
+    } catch (error) {
+      console.error('Error fetching article:', error.response?.data || error.message);
+      throw error;
+    }
   },
   
   // Get articles by user ID
-  getUserArticles: (userId) => {
-    return axios.get(`/api/users/${userId}/articles`);
+  getUserArticles: async (userId) => {
+    const response = await api.get(`/users/${userId}/articles`);
+    return response.data;
   },
   
   // Get related articles
-  getRelatedArticles: ({ categoryId, articleId, tags, limit = 6 }) => {
-    return axios.get(`${API_URL}/related`, { 
+  getRelatedArticles: async ({ categoryId, articleId, tags, limit = 6 }) => {
+    const response = await api.get(`/articles/related`, { 
       params: { categoryId, articleId, tags, limit } 
     });
+    return response.data;
   },
   
   // Get popular articles
-  getPopularArticles: (limit = 5) => {
-    return axios.get(`${API_URL}/popular`, { params: { limit } });
+  getPopularArticles: async (limit = 5) => {
+    const response = await api.get(`/articles/popular`, { params: { limit } });
+    return response.data;
   },
   
   // Get article categories
-  getCategories: () => {
-    return axios.get('/api/categories');
+  getCategories: async () => {
+    const response = await api.get('/categories');
+    return response.data;
   },
   
-  // Create a new article
-  createArticle: (articleData) => {
-    return axios.post(API_URL, articleData);
+  // Create a new article (admin only)
+  createArticle: async (articleData) => {
+    const response = await api.post('/articles', articleData);
+    return response.data;
   },
   
-  // Update an existing article
-  updateArticle: (id, articleData) => {
-    return axios.put(`${API_URL}/${id}`, articleData);
+  // Update an existing article (admin only)
+  updateArticle: async (id, articleData) => {
+    const response = await api.put(`/articles/${id}`, articleData);
+    return response.data;
   },
   
-  // Delete an article
-  deleteArticle: (id) => {
-    return axios.delete(`${API_URL}/${id}`);
+  // Delete an article (admin only)
+  deleteArticle: async (id) => {
+    const response = await api.delete(`/articles/${id}`);
+    return response.data;
   },
   
   // Add a comment to an article
-  addComment: (articleId, comment) => {
-    return axios.post(`${API_URL}/${articleId}/comments`, comment);
+  addComment: async (articleId, comment) => {
+    const response = await api.post(`/articles/${articleId}/comments`, comment);
+    return response.data;
   },
   
   // Delete a comment
-  deleteComment: (articleId, commentId) => {
-    return axios.delete(`${API_URL}/${articleId}/comments/${commentId}`);
+  deleteComment: async (articleId, commentId) => {
+    const response = await api.delete(`/articles/${articleId}/comments/${commentId}`);
+    return response.data;
   },
   
   // Like an article
-  likeArticle: (articleId) => {
-    return axios.post(`${API_URL}/${articleId}/like`);
+  likeArticle: async (articleId) => {
+    const response = await api.post(`/articles/${articleId}/like`);
+    return response.data;
   },
   
   // Unlike an article
-  unlikeArticle: (articleId) => {
-    return axios.delete(`${API_URL}/${articleId}/like`);
+  unlikeArticle: async (articleId) => {
+    const response = await api.delete(`/articles/${articleId}/like`);
+    return response.data;
   },
   
   // Search articles
-  searchArticles: (query) => {
-    return axios.get(`${API_URL}/search`, { params: { q: query } });
+  searchArticles: async (query) => {
+    const response = await api.get(`/articles/search`, { params: { q: query } });
+    return response.data;
   }
 };
 

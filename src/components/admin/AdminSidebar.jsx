@@ -9,22 +9,24 @@ const AdminSidebar = () => {
       <div className="p-6">
         <h2 className="text-2xl font-bold">Admin Panel</h2>
       </div>
+
       <div className="px-4 py-2">
         <div className="flex items-center space-x-3 mb-6 px-2">
           <img
             src={user?.avatarUrl || 'https://via.placeholder.com/40'}
-            alt={user?.name}
+            alt={user?.name || 'User Avatar'}
             className="h-10 w-10 rounded-full"
           />
           <div>
-            <p className="text-sm font-medium">{user?.name}</p>
+            <p className="text-sm font-medium">{user?.name || 'User'}</p>
             <p className="text-xs text-gray-400">Administrator</p>
           </div>
         </div>
+
         <nav className="space-y-1">
+          {/* Tombol Kembali ke Homepage */}
           <NavLink
-            to="/admin"
-            exact="true"
+            to="/"
             className={({ isActive }) =>
               isActive
                 ? "bg-gray-800 text-white group flex items-center px-2 py-2 text-sm font-medium rounded-md"
@@ -36,6 +38,34 @@ const AdminSidebar = () => {
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
+              aria-hidden="true"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M3 12l2-2m0 0l7-7 7 7m-9 12v-8h4v8m5-2v-6a2 2 0 00-2-2h-3.5a2 2 0 00-2 2v6"
+              />
+            </svg>
+            Beranda
+          </NavLink>
+
+          {/* Menu Dashboard */}
+          <NavLink
+            to="/admin"
+            end
+            className={({ isActive }) =>
+              isActive
+                ? "bg-gray-800 text-white group flex items-center px-2 py-2 text-sm font-medium rounded-md"
+                : "text-gray-300 hover:bg-gray-700 hover:text-white group flex items-center px-2 py-2 text-sm font-medium rounded-md"
+            }
+          >
+            <svg
+              className="mr-3 h-6 w-6 text-gray-400"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              aria-hidden="true"
             >
               <path
                 strokeLinecap="round"
@@ -47,6 +77,7 @@ const AdminSidebar = () => {
             Dashboard
           </NavLink>
 
+          {/* Menu Artikel */}
           <NavLink
             to="/admin/articles"
             className={({ isActive }) =>
@@ -60,6 +91,7 @@ const AdminSidebar = () => {
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
+              aria-hidden="true"
             >
               <path
                 strokeLinecap="round"
@@ -71,6 +103,7 @@ const AdminSidebar = () => {
             Artikel
           </NavLink>
 
+          {/* Menu Pengguna */}
           <NavLink
             to="/admin/users"
             className={({ isActive }) =>
@@ -84,6 +117,7 @@ const AdminSidebar = () => {
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
+              aria-hidden="true"
             >
               <path
                 strokeLinecap="round"
@@ -95,6 +129,7 @@ const AdminSidebar = () => {
             Pengguna
           </NavLink>
 
+          {/* Menu Kategori */}
           <NavLink
             to="/admin/categories"
             className={({ isActive }) =>
@@ -108,6 +143,7 @@ const AdminSidebar = () => {
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
+              aria-hidden="true"
             >
               <path
                 strokeLinecap="round"
@@ -119,6 +155,7 @@ const AdminSidebar = () => {
             Kategori
           </NavLink>
 
+          {/* Menu Komentar */}
           <NavLink
             to="/admin/comments"
             className={({ isActive }) =>
@@ -132,6 +169,7 @@ const AdminSidebar = () => {
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
+              aria-hidden="true"
             >
               <path
                 strokeLinecap="round"
@@ -143,6 +181,7 @@ const AdminSidebar = () => {
             Komentar
           </NavLink>
 
+          {/* Menu Analitik */}
           <NavLink
             to="/admin/analytics"
             className={({ isActive }) =>
@@ -156,6 +195,7 @@ const AdminSidebar = () => {
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
+              aria-hidden="true"
             >
               <path
                 strokeLinecap="round"
@@ -167,6 +207,7 @@ const AdminSidebar = () => {
             Analitik
           </NavLink>
 
+          {/* Menu Pengaturan */}
           <NavLink
             to="/admin/settings"
             className={({ isActive }) =>
@@ -180,6 +221,7 @@ const AdminSidebar = () => {
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
+              aria-hidden="true"
             >
               <path
                 strokeLinecap="round"
