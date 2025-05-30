@@ -1,3 +1,4 @@
+// src/pages/admin/ManageArticles.jsx
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchArticles, deleteArticle } from '../../features/admin/adminSlice';
@@ -16,24 +17,32 @@ const ManageArticles = () => {
 
   useEffect(() => {
     dispatch(fetchArticles());
+    // Debug: log token dan response
+    console.log('Token:', localStorage.getItem('token'));
   }, [dispatch]);
 
   useEffect(() => {
-    if (articles) {
+    // Pastikan articles adalah array sebelum difilter
+    if (articles && Array.isArray(articles)) {
       let filtered = [...articles];
       
       // Filter by search query
       if (searchQuery) {
         const query = searchQuery.toLowerCase();
         filtered = filtered.filter(article => 
-          article.title.toLowerCase().includes(query) || 
-          article.author.name.toLowerCase().includes(query)
+          article.title?.toLowerCase().includes(query) || 
+          article.author?.name?.toLowerCase().includes(query)
         );
       }
       
       // Filter by category
       if (filterCategory !== 'all') {
-        filtered = filtered.filter(article => article.category === filterCategory);
+        filtered = filtered.filter(article => {
+          if (typeof article.category === 'string') {
+            return article.category === filterCategory;
+          }
+          return article.category?.name === filterCategory || article.category?.id === filterCategory;
+        });
       }
       
       // Filter by status
@@ -42,6 +51,10 @@ const ManageArticles = () => {
       }
       
       setFilteredArticles(filtered);
+    } else {
+      // Jika articles bukan array, set filteredArticles ke array kosong
+      setFilteredArticles([]);
+      console.error('Articles is not an array:', articles);
     }
   }, [articles, searchQuery, filterCategory, filterStatus]);
 
@@ -54,7 +67,7 @@ const ManageArticles = () => {
   };
 
   const handleSelectAll = (e) => {
-    if (e.target.checked) {
+    if (e.target.checked && Array.isArray(filteredArticles)) {
       setSelectedArticles(filteredArticles.map(article => article.id));
     } else {
       setSelectedArticles([]);
@@ -74,12 +87,21 @@ const ManageArticles = () => {
     }
   };
 
-  if (status === 'loading' && !articles.length) {
+  if (status === 'loading') {
     return <LoadingSpinner />;
   }
 
-  // Get unique categories for filter
-  const categories = articles ? [...new Set(articles.map(article => article.category))].filter(Boolean) : [];
+  // Debug: log response dari API
+  console.log('Articles from API:', articles);
+
+  // Get unique categories for filter - dengan validasi
+  const categories = Array.isArray(articles) 
+    ? [...new Set(articles.map(article => {
+        if (typeof article.category === 'string') return article.category;
+        return article.category?.name || article.category?.id;
+      }))]
+      .filter(Boolean) 
+    : [];
 
   return (
     <div className="bg-white shadow rounded-lg p-6">
@@ -135,8 +157,8 @@ const ManageArticles = () => {
             onChange={(e) => setFilterCategory(e.target.value)}
           >
             <option value="all">Semua Kategori</option>
-            {categories.map(category => (
-              <option key={category} value={category}>{category}</option>
+            {categories.map((category, index) => (
+              <option key={index} value={category}>{category}</option>
             ))}
           </select>
         </div>
@@ -191,7 +213,7 @@ const ManageArticles = () => {
             </tr>
           </thead>
           <tbody className="bg-white divide-y divide-gray-200">
-            {filteredArticles.length > 0 ? (
+            {Array.isArray(filteredArticles) && filteredArticles.length > 0 ? (
               filteredArticles.map((article) => (
                 <tr key={article.id}>
                   <td className="px-6 py-4 whitespace-nowrap">
@@ -214,18 +236,22 @@ const ManageArticles = () => {
                       <div className="flex-shrink-0 h-8 w-8">
                         <img 
                           className="h-8 w-8 rounded-full" 
-                          src={article.author.avatarUrl || 'https://via.placeholder.com/32'} 
-                          alt={article.author.name} 
+                          src={article.author?.avatarUrl || '/assets/images/default-avatar.png'} 
+                          alt={article.author?.name || 'Author'} 
                         />
                       </div>
                       <div className="ml-4">
-                        <div className="text-sm font-medium text-gray-900">{article.author.name}</div>
+                        <div className="text-sm font-medium text-gray-900">
+                          {article.author?.name || 'Unknown'}
+                        </div>
                       </div>
                     </div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
-                      {article.category}
+                      {typeof article.category === 'string' 
+                        ? article.category 
+                        : article.category?.name || 'Uncategorized'}
                     </span>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
@@ -238,7 +264,8 @@ const ManageArticles = () => {
                     </span>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    {article.publishedDate}
+                    {article.publishedDate || article.published_at || 
+                      (article.created_at && new Date(article.created_at).toLocaleDateString())}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                     <Link to={`/admin/articles/edit/${article.id}`} className="text-indigo-600 hover:text-indigo-900 mr-3">
@@ -256,7 +283,11 @@ const ManageArticles = () => {
             ) : (
               <tr>
                 <td colSpan="7" className="px-6 py-4 text-center text-gray-500">
-                  Tidak ada artikel yang ditemukan.
+                  {status === 'loading' 
+                    ? 'Memuat artikel...' 
+                    : status === 'failed' 
+                      ? `Error: ${error}` 
+                      : 'Tidak ada artikel yang ditemukan.'}
                 </td>
               </tr>
             )}

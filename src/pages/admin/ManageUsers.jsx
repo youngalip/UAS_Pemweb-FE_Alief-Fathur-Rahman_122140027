@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { fetchUsers, updateUserRole, deleteUser } from '../../features/admin/adminSlice';
 import LoadingSpinner from '../../components/common/LoadingSpinner';
 import Button from '../../components/common/button';
+import { Link } from 'react-router-dom';
 
 const ManageUsers = () => {
   const dispatch = useDispatch();
@@ -242,9 +243,9 @@ const ManageUsers = () => {
                     {user.joinedDate}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                    <a href={`/admin/users/edit/${user.id}`} className="text-indigo-600 hover:text-indigo-900 mr-3">
+                    <Link to={`/admin/users/edit/${user.id}`} className="text-indigo-600 hover:text-indigo-900 mr-3">
                       Edit
-                    </a>
+                    </Link>
                     <button
                       onClick={() => handleDeleteUser(user.id)}
                       className="text-red-600 hover:text-red-900"

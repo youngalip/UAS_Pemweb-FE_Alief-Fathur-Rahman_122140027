@@ -39,6 +39,7 @@ const App = () => {
   const dispatch = useDispatch();
 
   useEffect(() => {
+    dispatch(initAuth());
     const token = localStorage.getItem('token');
     if (token) {
       dispatch(checkAuth());

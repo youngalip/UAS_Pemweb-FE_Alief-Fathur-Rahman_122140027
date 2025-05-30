@@ -144,8 +144,10 @@ export const fetchAdminStats = createAsyncThunk(
   async (_, { rejectWithValue }) => {
     try {
       const response = await adminAPI.getDashboardStats();
+      console.log('Dashboard stats response:', response.data);
       return response.data;
     } catch (error) {
+      console.error('Error fetching admin stats:', error.response?.data || error.message);
       return rejectWithValue(error.response?.data?.message || 'Failed to fetch admin stats');
     }
   }
@@ -187,7 +189,7 @@ const adminSlice = createSlice({
       })
       .addCase(fetchAdminStats.fulfilled, (state, action) => {
         state.status = 'succeeded';
-        state.stats = action.payload;
+        state.stats = action.payload.stats || action.payload;
       })
       .addCase(fetchAdminStats.rejected, (state, action) => {
         state.status = 'failed';
@@ -199,7 +201,7 @@ const adminSlice = createSlice({
       })
       .addCase(fetchDashboardStats.fulfilled, (state, action) => {
         state.status = 'succeeded';
-        state.stats = action.payload;
+        state.stats = action.payload.stats || action.payload;
       })
       .addCase(fetchDashboardStats.rejected, (state, action) => {
         state.status = 'failed';
@@ -212,7 +214,7 @@ const adminSlice = createSlice({
       })
       .addCase(fetchArticles.fulfilled, (state, action) => {
         state.status = 'succeeded';
-        state.articles = action.payload;
+        state.articles = action.payload.articles || action.payload;
       })
       .addCase(fetchArticles.rejected, (state, action) => {
         state.status = 'failed';

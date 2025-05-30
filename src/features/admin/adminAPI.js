@@ -1,84 +1,83 @@
-import axios from 'axios';
-
-const API_URL = '/api/admin';
+// src/features/admin/adminAPI.js
+import api from '../../utils/api'; // sesuaikan path ke file api.js
 
 const adminAPI = {
   // Dashboard
   getDashboardStats: () => {
-    return axios.get(`${API_URL}/stats`);
+    return api.get('/admin/stats');
   },
 
   // Articles
   getArticles: (params) => {
-    return axios.get(`${API_URL}/articles`, { params });
+    return api.get('/admin/articles', { params });
   },
   
   getArticle: (id) => {
-    return axios.get(`${API_URL}/articles/${id}`);
+    return api.get(`/admin/articles/${id}`);
   },
   
   createArticle: (articleData) => {
-    return axios.post(`${API_URL}/articles`, articleData);
+    return api.post('/admin/articles', articleData);
   },
   
   updateArticle: (id, articleData) => {
-    return axios.put(`${API_URL}/articles/${id}`, articleData);
+    return api.put(`/admin/articles/${id}`, articleData);
   },
   
   deleteArticle: (id) => {
-    return axios.delete(`${API_URL}/articles/${id}`);
+    return api.delete(`/admin/articles/${id}`);
   },
 
   // Categories
   getCategories: () => {
-    return axios.get(`${API_URL}/categories`);
+    return api.get('/admin/categories');
   },
   
   createCategory: (categoryData) => {
-    return axios.post(`${API_URL}/categories`, categoryData);
+    return api.post('/admin/categories', categoryData);
   },
   
   updateCategory: (id, categoryData) => {
-    return axios.put(`${API_URL}/categories/${id}`, categoryData);
+    return api.put(`/admin/categories/${id}`, categoryData);
   },
   
   deleteCategory: (id) => {
-    return axios.delete(`${API_URL}/categories/${id}`);
+    return api.delete(`/admin/categories/${id}`);
   },
 
   // Users
   getUsers: (params) => {
-    return axios.get(`${API_URL}/users`, { params });
+    return api.get('/admin/users', { params });
   },
   
   getUser: (id) => {
-    return axios.get(`${API_URL}/users/${id}`);
+    return api.get(`/admin/users/${id}`);
   },
   
   updateUser: (id, userData) => {
-    return axios.put(`${API_URL}/users/${id}`, userData);
+    return api.put(`/admin/users/${id}`, userData);
   },
   
   updateUserRole: (id, role) => {
-    return axios.patch(`${API_URL}/users/${id}/role`, { role });
+    return api.patch(`/admin/users/${id}/role`, { role });
   },
   
   deleteUser: (id) => {
-    return axios.delete(`${API_URL}/users/${id}`);
+    return api.delete(`/admin/users/${id}`);
   },
 
   // Comments
   getComments: (params) => {
-    return axios.get(`${API_URL}/comments`, { params });
+    return api.get('/admin/comments', { params });
   },
   
   deleteComment: (id) => {
-    return axios.delete(`${API_URL}/comments/${id}`);
+    return api.delete(`/admin/comments/${id}`);
   },
 
   // Analytics
   getAnalytics: (period) => {
-    return axios.get(`${API_URL}/analytics`, { params: { period } });
+    return api.get('/admin/analytics', { params: { period } });
   }
 };
 
