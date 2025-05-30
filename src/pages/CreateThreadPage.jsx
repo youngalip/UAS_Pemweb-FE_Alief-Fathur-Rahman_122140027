@@ -1,33 +1,39 @@
-import React from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
 import { createThread } from '../features/community/communitySlice';
 import ThreadForm from '../components/community/ThreadForm';
-import { Navigate } from 'react-router-dom';
 
 const CreateThreadPage = () => {
   const dispatch = useDispatch();
-  const { isAuthenticated, status } = useSelector(state => state.auth);
-
-  // Jika sedang loading status auth, bisa tampil loading atau kosongkan dulu
-  if (status === 'loading') {
-    return <div>Loading...</div>;
-  }
-
-  // Jika tidak authenticated, redirect ke login
-  if (!isAuthenticated) {
-    return <Navigate to="/login" replace />;
-  }
-
+  const navigate = useNavigate();
+  const [createSuccess, setCreateSuccess] = useState(false);
+  
   const handleSubmit = async (threadData) => {
-    return dispatch(createThread(threadData)).unwrap();
+    try {
+      const result = await dispatch(createThread(threadData)).unwrap();
+      setCreateSuccess(true);
+      
+      // Redirect setelah 1.5 detik
+      setTimeout(() => {
+        navigate('/community');
+      }, 1500);
+    } catch (error) {
+      console.error('Failed to create thread:', error);
+    }
   };
-
+  
   return (
-    <div className="bg-gray-50 min-h-screen py-12">
-      <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
-        <h1 className="text-2xl font-bold text-gray-900 mb-6">Buat Diskusi Baru</h1>
-        <ThreadForm onSubmit={handleSubmit} />
-      </div>
+    <div className="max-w-3xl mx-auto">
+      <h1 className="text-2xl font-bold mb-6">Create New Thread</h1>
+      
+      {createSuccess && (
+        <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">
+          Thread created successfully! Redirecting...
+        </div>
+      )}
+      
+      <ThreadForm onSubmit={handleSubmit} />
     </div>
   );
 };

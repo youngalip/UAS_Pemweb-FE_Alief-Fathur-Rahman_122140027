@@ -1,64 +1,79 @@
-// src/components/community/CommentForm.jsx
+// CommentForm.jsx
 import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { addComment } from '../../features/community/communitySlice';
 
-const CommentForm = ({ threadId }) => {
+const CommentForm = ({ threadId, parentId = null }) => {
   const [content, setContent] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState(null);
+  const [success, setSuccess] = useState(false);
   const dispatch = useDispatch();
-
+  
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
     if (!content.trim()) return;
     
     setIsSubmitting(true);
+    setError(null);
+    
     try {
+      // Tidak perlu mengirim thread_id dalam payload
       await dispatch(addComment({ 
         threadId, 
-        commentData: { content } 
+        commentData: { 
+          content,
+          parent_id: parentId
+        }
       })).unwrap();
-      // src/components/community/CommentForm.jsx (lanjutan)
+      
       setContent('');
+      setSuccess(true);
+      
+      // Reset success message after 3 seconds
+      setTimeout(() => setSuccess(false), 3000);
     } catch (error) {
-      console.error('Failed to add comment:', error);
+      setError(`Failed to add comment: ${error}`);
+      console.error(error);
     } finally {
       setIsSubmitting(false);
     }
   };
-
+  
   return (
-    <form onSubmit={handleSubmit} className="mb-8">
-      <div className="mb-4">
-        <label htmlFor="comment" className="block text-sm font-medium text-gray-700 mb-2">
-          Tambahkan Komentar
-        </label>
+    <div className="mb-6">
+      {success && (
+        <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-2 rounded mb-4">
+          Comment added successfully!
+        </div>
+      )}
+      
+      {error && (
+        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-2 rounded mb-4">
+          {error}
+        </div>
+      )}
+      
+      <form onSubmit={handleSubmit}>
         <textarea
-          id="comment"
-          rows="4"
-          className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary"
-          placeholder="Tulis komentar Anda di sini..."
+          className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+          rows="3"
+          placeholder="Write your comment..."
           value={content}
           onChange={(e) => setContent(e.target.value)}
-          required
+          disabled={isSubmitting}
         ></textarea>
-      </div>
-      <button
-        type="submit"
-        disabled={isSubmitting || !content.trim()}
-        className={`px-4 py-2 rounded-md text-white font-medium ${
-          isSubmitting || !content.trim()
-            ? 'bg-gray-400 cursor-not-allowed'
-            : 'bg-primary hover:bg-primary-dark'
-        }`}
-      >
-        {isSubmitting ? 'Mengirim...' : 'Kirim Komentar'}
-      </button>
-    </form>
+        
+        <button
+          type="submit"
+          className="mt-2 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 disabled:bg-blue-300 disabled:cursor-not-allowed"
+          disabled={isSubmitting || !content.trim()}
+        >
+          {isSubmitting ? 'Posting...' : 'Post Comment'}
+        </button>
+      </form>
+    </div>
   );
 };
 
 export default CommentForm;
-
-      
