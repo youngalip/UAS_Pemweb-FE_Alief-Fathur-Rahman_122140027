@@ -37,7 +37,7 @@ const ArticleDetailPage = () => {
     }
     // Optional cleanup jika ada action clearCurrentArticle
     // return () => dispatch(clearCurrentArticle());
-  }, [id, dispatch, retryCount]);
+  }, [id, dispatch]);
 
   // Fungsi untuk mengekstrak nama kategori dengan aman
   const getCategoryName = (category) => {

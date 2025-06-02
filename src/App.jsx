@@ -30,6 +30,9 @@ import ManageCategories from './pages/admin/ManageCategories';
 import ManageComments from './pages/admin/ManageComments';
 import AdminAnalytics from './pages/admin/AdminAnalytics';
 import AdminSettings from './pages/admin/AdminSettings';
+import ManageThreads from './pages/admin/ManageThreads';
+import CreateArticlePage from './pages/admin/CreateArticlePage';
+
 
 // Protected Routes
 import ProtectedRoute from './components/auth/ProtectedRoute';
@@ -98,14 +101,13 @@ const App = () => {
         >
           <Route index element={<AdminDashboard />} />
           <Route path="articles" element={<ManageArticles />} />
+          <Route path="articles/create" element={<CreateArticlePage />} />
           <Route path="users" element={<ManageUsers />} />
+          <Route path="threads" element={<ManageThreads />} />
           <Route path="categories" element={<ManageCategories />} />
           <Route path="comments" element={<ManageComments />} />
           <Route path="analytics" element={<AdminAnalytics />} />
           <Route path="settings" element={<AdminSettings />} />
-          
-          {/* Jika ada fitur admin komunitas, tambahkan di sini */}
-          {/* <Route path="community" element={<ManageCommunity />} /> */}
         </Route>
       </Routes>
     </Router>

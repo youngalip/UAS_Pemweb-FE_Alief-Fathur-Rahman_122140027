@@ -27,6 +27,32 @@ export const fetchArticles = createAsyncThunk(
   }
 );
 
+// Tambahkan di bagian import thunk di atas
+export const createArticle = createAsyncThunk(
+  'admin/createArticle',
+  async (articleData, { rejectWithValue }) => {
+    try {
+      const response = await adminAPI.createArticle(articleData);
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response?.data?.message || 'Failed to create article');
+    }
+  }
+);
+
+export const updateArticle = createAsyncThunk(
+  'admin/updateArticle',
+  async ({ id, articleData }, { rejectWithValue }) => {
+    try {
+      const response = await adminAPI.updateArticle(id, articleData);
+      return response;
+    } catch (error) {
+      return rejectWithValue(error.response?.data?.message || 'Failed to update article');
+    }
+  }
+);
+
+
 export const deleteArticle = createAsyncThunk(
   'admin/deleteArticle',
   async (id, { rejectWithValue }) => {
@@ -35,6 +61,31 @@ export const deleteArticle = createAsyncThunk(
       return id;
     } catch (error) {
       return rejectWithValue(error.response?.data?.message || 'Failed to delete article');
+    }
+  }
+);
+
+// Tambahkan thunks untuk admin threads
+export const fetchAdminThreads = createAsyncThunk(
+  'admin/fetchAdminThreads',
+  async (params, { rejectWithValue }) => {
+    try {
+      const response = await adminAPI.getThreads(params);
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response?.data?.message || 'Failed to fetch threads');
+    }
+  }
+);
+
+export const deleteAdminThread = createAsyncThunk(
+  'admin/deleteAdminThread',
+  async (id, { rejectWithValue }) => {
+    try {
+      await adminAPI.deleteThread(id);
+      return id;
+    } catch (error) {
+      return rejectWithValue(error.response?.data?.message || 'Failed to delete thread');
     }
   }
 );
@@ -165,6 +216,7 @@ const initialState = {
   articles: [],
   categories: [],
   users: [],
+  threads: [],
   comments: [],
   analytics: null,
   status: 'idle', // 'idle' | 'loading' | 'succeeded' | 'failed'
@@ -207,7 +259,23 @@ const adminSlice = createSlice({
         state.status = 'failed';
         state.error = action.payload;
       })
-      
+
+      // Admin Threads
+      .addCase(fetchAdminThreads.pending, (state) => {
+        state.status = 'loading';
+      })
+      .addCase(fetchAdminThreads.fulfilled, (state, action) => {
+        state.status = 'succeeded';
+        state.threads = action.payload.threads || action.payload|| [];
+      })
+      .addCase(fetchAdminThreads.rejected, (state, action) => {
+        state.status = 'failed';
+        state.error = action.payload;
+      })
+      .addCase(deleteAdminThread.fulfilled, (state, action) => {
+        state.threads = state.threads.filter(thread => thread.id !== action.payload);
+      })
+
       // Articles
       .addCase(fetchArticles.pending, (state) => {
         state.status = 'loading';
@@ -220,7 +288,38 @@ const adminSlice = createSlice({
         state.status = 'failed';
         state.error = action.payload;
       })
-      
+      // Create Article
+      .addCase(createArticle.pending, (state) => {
+        state.status = 'loading';
+        state.error = null;
+      })
+      .addCase(createArticle.fulfilled, (state, action) => {
+        state.status = 'succeeded';
+        // Tambahkan artikel baru di awal array
+        state.articles.unshift(action.payload.article||action.payload);
+        state.error = null;
+      })
+      .addCase(createArticle.rejected, (state, action) => {
+        state.status = 'failed';
+        state.error = action.payload;
+      })
+      // Update Article
+      .addCase(updateArticle.pending, (state) => {
+        state.status = 'loading';
+        state.error = null;
+      })
+      .addCase(updateArticle.fulfilled, (state, action) => {
+        state.status = 'succeeded';
+        const index = state.articles.findIndex(article => article.id === action.payload.id);
+        if (index !== -1) {
+          state.articles[index] = action.payload;
+        }
+        state.error = null;
+      })
+      .addCase(updateArticle.rejected, (state, action) => {
+        state.status = 'failed';
+        state.error = action.payload;
+      })
       .addCase(deleteArticle.fulfilled, (state, action) => {
         state.articles = state.articles.filter(article => article.id !== action.payload);
       })
@@ -237,7 +336,7 @@ const adminSlice = createSlice({
         state.status = 'failed';
         state.error = action.payload;
       })
-            // Categories (continued)
+      // Categories (continued)
       .addCase(addCategory.fulfilled, (state, action) => {
         state.categories.push(action.payload);
       })

@@ -85,6 +85,28 @@ const AdminDashboard = () => {
 
             <div className="bg-white rounded-lg shadow p-6">
               <div className="flex items-center">
+                <div className="p-3 rounded-full bg-purple-100">
+                  <svg className="h-8 w-8 text-purple-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8h2a2 2 0 012 2v6a2 2 0 01-2 2h-2v4l-4-4H9a1.994 1.994 0 01-1.414-.586m0 0L11 14h4a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2v4l.586-.586z" />
+                  </svg>
+                </div>
+                <div className="ml-4">
+                  <h2 className="text-gray-500 text-sm font-medium">Total Thread</h2>
+                  <p className="text-3xl font-bold text-gray-900">{stats?.totalThreads || 0}</p>
+                </div>
+              </div>
+              <div className="mt-4">
+                <Link to="/admin/threads" className="text-purple-600 text-sm font-medium flex items-center">
+                  Lihat Detail
+                  <svg className="h-4 w-4 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  </svg>
+                </Link>
+              </div>
+            </div>
+
+            <div className="bg-white rounded-lg shadow p-6">
+              <div className="flex items-center">
                 <div className="p-3 rounded-full bg-green-100">
                   <svg className="h-8 w-8 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z" />

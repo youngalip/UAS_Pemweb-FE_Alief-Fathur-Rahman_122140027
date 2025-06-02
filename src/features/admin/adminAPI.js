@@ -28,6 +28,19 @@ const adminAPI = {
     return api.delete(`/admin/articles/${id}`);
   },
 
+  // Threads / Komunitas
+  getThreads: (params) => {
+    return api.get('/admin/threads', { params });
+  },
+
+  getThread: (id) => {
+    return api.get(`/admin/threads/${id}`);
+  },
+
+  deleteThread: (id) => {
+    return api.delete(`/admin/threads/${id}`);
+  },
+
   // Categories
   getCategories: () => {
     return api.get('/admin/categories');
