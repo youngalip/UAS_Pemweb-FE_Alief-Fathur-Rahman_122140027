@@ -259,7 +259,7 @@ const adminSlice = createSlice({
       })
       .addCase(fetchUsers.fulfilled, (state, action) => {
         state.status = 'succeeded';
-        state.users = action.payload;
+        state.users = action.payload.users || action.payload || [];
       })
       .addCase(fetchUsers.rejected, (state, action) => {
         state.status = 'failed';

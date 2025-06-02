@@ -15,20 +15,28 @@ const ManageUsers = () => {
   const [filteredUsers, setFilteredUsers] = useState([]);
 
   useEffect(() => {
-    dispatch(fetchUsers());
+    dispatch(fetchUsers())
+      .unwrap()
+      .then(data => {
+        console.log('Users data:', data);
+      })
+      .catch(err => {
+        console.error('Error fetching users:', err);
+      });
   }, [dispatch]);
 
   useEffect(() => {
-    if (users) {
+    // Pastikan users adalah array sebelum difilter
+    if (users && Array.isArray(users)) {
       let filtered = [...users];
       
       // Filter by search query
       if (searchQuery) {
         const query = searchQuery.toLowerCase();
         filtered = filtered.filter(user => 
-          user.name.toLowerCase().includes(query) || 
-          user.email.toLowerCase().includes(query) ||
-          user.username.toLowerCase().includes(query)
+          (user.name?.toLowerCase() || '').includes(query) || 
+          (user.email?.toLowerCase() || '').includes(query) ||
+          (user.username?.toLowerCase() || '').includes(query)
         );
       }
       
@@ -46,6 +54,10 @@ const ManageUsers = () => {
       }
       
       setFilteredUsers(filtered);
+    } else {
+      // Jika users bukan array, set filteredUsers ke array kosong
+      setFilteredUsers([]);
+      console.error('Users is not an array:', users);
     }
   }, [users, searchQuery, filterRole, filterStatus]);
 
@@ -58,7 +70,7 @@ const ManageUsers = () => {
   };
 
   const handleSelectAll = (e) => {
-    if (e.target.checked) {
+    if (e.target.checked && Array.isArray(filteredUsers)) {
       setSelectedUsers(filteredUsers.map(user => user.id));
     } else {
       setSelectedUsers([]);
@@ -82,9 +94,12 @@ const ManageUsers = () => {
     }
   };
 
-  if (status === 'loading' && !users.length) {
+  if (status === 'loading' && (!users || users.length === 0)) {
     return <LoadingSpinner />;
   }
+
+  // Debug: log response dari API
+  console.log('Users from API:', users);
 
   return (
     <div className="bg-white shadow rounded-lg p-6">
@@ -113,7 +128,7 @@ const ManageUsers = () => {
           <label htmlFor="search" className="block text-sm font-medium text-gray-700 mb-1">
             Cari Pengguna
           </label>
-                    <input
+          <input
             type="text"
             id="search"
             placeholder="Cari nama, email, atau username..."
@@ -190,7 +205,7 @@ const ManageUsers = () => {
             </tr>
           </thead>
           <tbody className="bg-white divide-y divide-gray-200">
-            {filteredUsers.length > 0 ? (
+            {Array.isArray(filteredUsers) && filteredUsers.length > 0 ? (
               filteredUsers.map((user) => (
                 <tr key={user.id}>
                   <td className="px-6 py-4 whitespace-nowrap">
@@ -206,23 +221,24 @@ const ManageUsers = () => {
                       <div className="flex-shrink-0 h-10 w-10">
                         <img 
                           className="h-10 w-10 rounded-full" 
-                          src={user.avatarUrl || 'https://via.placeholder.com/40'} 
-                          alt={user.name} 
+                          src={user.avatarUrl || '/assets/images/default-avatar.png'} 
+                          alt={user.name || user.username || 'User'} 
+                          onError={(e) => { e.target.src = '/assets/images/default-avatar.png'; }}
                         />
                       </div>
                       <div className="ml-4">
-                        <div className="text-sm font-medium text-gray-900">{user.name}</div>
-                        <div className="text-sm text-gray-500">@{user.username}</div>
+                        <div className="text-sm font-medium text-gray-900">{user.name || user.full_name || 'Unknown'}</div>
+                        <div className="text-sm text-gray-500">@{user.username || 'user'}</div>
                       </div>
                     </div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm text-gray-900">{user.email}</div>
+                    <div className="text-sm text-gray-900">{user.email || 'No email'}</div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <select
                       className="border border-gray-300 rounded-md text-sm"
-                      value={user.role}
+                      value={user.role || 'user'}
                       onChange={(e) => handleRoleChange(user.id, e.target.value)}
                     >
                       <option value="user">User</option>
@@ -240,7 +256,7 @@ const ManageUsers = () => {
                     </span>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    {user.joinedDate}
+                    {user.joinedDate || (user.created_at && new Date(user.created_at).toLocaleDateString())}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                     <Link to={`/admin/users/edit/${user.id}`} className="text-indigo-600 hover:text-indigo-900 mr-3">
@@ -258,7 +274,11 @@ const ManageUsers = () => {
             ) : (
               <tr>
                 <td colSpan="7" className="px-6 py-4 text-center text-gray-500">
-                  Tidak ada pengguna yang ditemukan.
+                  {status === 'loading' 
+                    ? 'Memuat pengguna...' 
+                    : status === 'failed' 
+                      ? `Error: ${error}` 
+                      : 'Tidak ada pengguna yang ditemukan.'}
                 </td>
               </tr>
             )}
